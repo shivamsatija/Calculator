@@ -5,6 +5,7 @@ public class First {
 		// TODO Auto-generated method stub
 		System.out.println("hello");
 		System.out.println("Can you hear me");
+		System.out.println("A conflicting statement");
 	}
 
 }
