@@ -1,5 +1,6 @@
 package Test;
 
+// Task Class
 public class Task {
 	int clientId;
 	String token;
