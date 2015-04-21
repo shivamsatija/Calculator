@@ -10,7 +10,7 @@ public class TestEvalExp {
 		Task[] tasks = new Task[6];
 		for (int i = 0; i < tasks.length; i++) {
 			tasks[i] = new Task();
-			tasks[i].setClientId(i);
+//			tasks[i].setClientId(i);
 		}
 		tasks[0].setToken("7");
 		tasks[1].setToken("365");
