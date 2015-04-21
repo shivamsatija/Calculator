@@ -1,29 +1,49 @@
 package Test;
 
+import java.util.HashSet;
+import java.util.Hashtable;
+
 class MyRunnable implements Runnable{
-	private int threadId;
+	private String threadId;
 	
-	MyRunnable(int id){
-		threadId = id;
+	MyRunnable(){
+		threadId = Thread.currentThread().getName();
 	}
 	
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		System.out.println(threadId);
+		
+		//while(sharedQueue.top.client == threadId)
+		
+		//		threadStack().push()
+		//		sharedQueue.pop()
 	}
 	
 }
 
 public class Server {
-	
-	public static void spawnWorker(int clientId){
-		MyRunnable t1 = new MyRunnable(0);
+	//The pool of worker threads
+	HashSet<String> threadPool = new HashSet<String>();
+			
+	Server(){
+		//while sharedQueue not empty
+		//   if(threadPool does not contains the thread with name as ClienId)
+		//		 spawnWorker(clientId)
+		//		 push to the shared Queue
 	}
 	
+	public static void spawnWorker(String clientId){
+		//Create a new runnable
+		MyRunnable r = new MyRunnable();
+		new Thread(r, clientId).start();
+	}
+			
 	public static void main(String[] args){
-		
-		MyRunnable t2 = new MyRunnable(1);
-		
+		//	Client client = new Client();
+		//System.out.println(client.clientId.toString());
+		//MyRunnable r1 = new MyRunnable();
+		//new Thread(r1, "Rohit").start();
+		//new Thread(r1, "Rohit").start();
 	}	 
 }
