@@ -2,14 +2,14 @@ package Test;
 
 // Task Class
 public class Task {
-	int clientId;
+	Client clientId;
 	String token;
 	
-	public int getClientId() {
+	public Client getClientId() {
 		return clientId;
 	}
-	public void setClientId(int clientId) {
-		this.clientId = clientId;
+	public void setClientId(Client clientId2) {
+		this.clientId = clientId2;
 	}
 	public String getToken() {
 		return token;
