@@ -8,10 +8,7 @@ import java.util.Stack;
 class MyRunnable implements Runnable{
 	private String threadId;
 	Stack<String> st = new Stack<String>();
-	MyRunnable(){
-		threadId = Thread.currentThread().getName();
-	}
-	
+		
 	private void pushInStack(Task theTop){
 		String[] syms = {"*", "+", "-", "/"};
 		if(Arrays.asList(syms).contains(theTop.getToken())){
@@ -22,7 +19,7 @@ class MyRunnable implements Runnable{
 			int result = computeBinary(operator, leftOperand, rightOperand);
 			st.push(Integer.toString(result));
 		}
-		else if(theTop.getToken() == "="){
+		else if(theTop.getToken().equals("=")){
 			System.out.println(st.pop());
 		}
 		else{
@@ -48,65 +45,69 @@ class MyRunnable implements Runnable{
 		return 0;
 	}
 	
+		
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		Task theTop = Constants.sharedQueue.element();		//	Make sync
-		while(true)//while(sharedQueue.top.client == threadId)
-		{	
-			if(theTop.getToken() == "q"){
-				break;
+		threadId = Thread.currentThread().getName();
+		
+		while(true){
+			
+			if(SharedQueue.hasElem()){
+			
+				synchronized (Server.class) {
+					//System.out.println(threadId + " " + SharedQueue.theSharedQueue.element().getClientId().toString());
+					if(SharedQueue.hasElem()){
+						if(SharedQueue.theSharedQueue.element().getToken().equals("q")){
+							break;
+						}
+						else if(SharedQueue.theSharedQueue.element().getClientId().toString().equals(threadId)){
+							pushInStack(SharedQueue.theSharedQueue.element());
+							SharedQueue.theSharedQueue.remove();
+						}
+					}
+				}
 			}
-			else if(theTop.getClientId().toString() == threadId){
-				if((theTop.getToken() == ".")){
-					Constants.sharedQueue.remove();		//	Make sync
-					break;
-				}	
-				pushInStack(theTop);
-				Constants.sharedQueue.remove();
-			}
-			theTop = Constants.sharedQueue.element();		//	Make sync	
 		}
-		Server.threadPool.remove(threadId);
-	}
+	}	
 	
 }
 
 public class Server {
 	//The pool of worker threads
 	static HashSet<String> threadPool = new HashSet<String>();
-	static Task theTop = new Task();
-	Server(){
-		
-			while(true){
-				if(! Constants.sharedQueue.isEmpty()){
-					theTop = Constants.sharedQueue.element();			//Make sync
-					if((theTop.getToken() == "q")){
-						Constants.sharedQueue.remove();
-						break;
+	
+	
+	public void start(){
+		while(true){
+			if(SharedQueue.hasElem()){
+				synchronized (Server.class) {				
+					if(SharedQueue.hasElem()){
+						if(SharedQueue.theSharedQueue.element().getToken().equals("q")){
+							break;
+						}
+						if(! threadPool.contains(SharedQueue.theSharedQueue.element().getClientId().toString())){
+							//System.out.println("Does not contain");
+							//System.out.println(threadPool.size());
+							threadPool.add(SharedQueue.theSharedQueue.element().getClientId().toString());
+							//System.out.println(threadPool.size());
+							spawnWorker(SharedQueue.theSharedQueue.element().getClientId().toString());
+						}
 					}
-					else if(! threadPool.contains(theTop.getClientId().toString())){
-						spawnWorker(theTop.getClientId().toString());
-						threadPool.add(theTop.getClientId().toString());	
-					}
+				//	break;
+//					for (String s : threadPool) {
+//						System.out.println(s +" " + SharedQueue.theSharedQueue.element().getClientId().toString());
+//					}
 				}
 			}
-		
+		}
 	}
-	
-	public void spawnWorker(String clientId){
+			
+	static void spawnWorker(String clientId){
 		//Create a new runnable
 		MyRunnable r = new MyRunnable();
 		new Thread(r, clientId).start();
 	}
 			
-	public static void main(String[] args){
-		
-		//Server s = new Server();
-		//	Client client = new Client();
-		//System.out.println(client.clientId.toString());
-		//MyRunnable r1 = new MyRunnable();
-		//new Thread(r1, "Rohit").start();
-		//new Thread(r1, "Rohit").start();
-	}	 
+ 
 }

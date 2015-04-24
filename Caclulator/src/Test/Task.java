@@ -6,6 +6,11 @@ public class Task {
 	Client clientId;
 	String token;
 	
+	Task(Client c, String t){
+		clientId = c;
+		token = t;
+	}
+	
 	public Client getClientId() {
 		return clientId;
 	}
