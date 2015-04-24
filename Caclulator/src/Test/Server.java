@@ -51,21 +51,21 @@ class MyRunnable implements Runnable{
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		Task theTop = Server.theTop;
-		theTop = Constants.sharedQueue.element();		//	Make sync
+		Task theTop = Constants.sharedQueue.element();		//	Make sync
 		while(true)//while(sharedQueue.top.client == threadId)
 		{	
-			if(theTop.getClientId().toString() == threadId){
+			if(theTop.getToken() == "q"){
+				break;
+			}
+			else if(theTop.getClientId().toString() == threadId){
 				if((theTop.getToken() == ".")){
 					Constants.sharedQueue.remove();		//	Make sync
 					break;
-				}
+				}	
 				pushInStack(theTop);
 				Constants.sharedQueue.remove();
-				
-				theTop = Constants.sharedQueue.element();		//	Make sync
-				
 			}
+			theTop = Constants.sharedQueue.element();		//	Make sync	
 		}
 		Server.threadPool.remove(threadId);
 	}
@@ -77,18 +77,21 @@ public class Server {
 	static HashSet<String> threadPool = new HashSet<String>();
 	static Task theTop = new Task();
 	Server(){
-		if(! Constants.sharedQueue.isEmpty()){				
-			
-			theTop = Constants.sharedQueue.element();			//Make sync
-	
-			while(! (theTop.getToken() == "q")){				
-				if(! threadPool.contains(theTop.getClientId().toString())){
-					spawnWorker(theTop.getClientId().toString());
-					threadPool.add(theTop.getClientId().toString());	
+		
+			while(true){
+				if(! Constants.sharedQueue.isEmpty()){
+					theTop = Constants.sharedQueue.element();			//Make sync
+					if((theTop.getToken() == "q")){
+						Constants.sharedQueue.remove();
+						break;
+					}
+					else if(! threadPool.contains(theTop.getClientId().toString())){
+						spawnWorker(theTop.getClientId().toString());
+						threadPool.add(theTop.getClientId().toString());	
+					}
 				}
-				theTop = Constants.sharedQueue.element();			//	Make sync
 			}
-		}
+		
 	}
 	
 	public void spawnWorker(String clientId){
