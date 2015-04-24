@@ -13,6 +13,7 @@ public class CalculatorMain {
 		c2.setClientId(c2);
 		c2.setExpression("93 365 * 43 +");
 
+		Server s = new Server();
 		for(Task task1: Constants.sharedQueue){
 			System.out.println(task1.clientId + " " + task1.token);
 		}
