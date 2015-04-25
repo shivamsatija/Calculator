@@ -3,7 +3,14 @@ package Test;
 public class Result {
 	private double value;
 	private boolean clientRead;
+	private boolean isExceptionRaised;
 	
+	public boolean isExceptionRaised() {
+		return isExceptionRaised;
+	}
+	public void setExceptionRaised(boolean isExceptionRaised) {
+		this.isExceptionRaised = isExceptionRaised;
+	}
 	public double getValue() {
 		return value;
 	}

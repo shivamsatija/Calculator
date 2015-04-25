@@ -28,8 +28,13 @@ public class Client {
 //			System.out.println(Shared.result.size());
 		}
 //		System.out.println("after while");
-		if(resultCalculated==true)
-			System.out.println(Shared.result.get(clientId.toString()).getValue());
+		if(resultCalculated==true){
+			if(Shared.result.get(clientId.toString()).isExceptionRaised()==false)
+				System.out.println(Shared.result.get(clientId.toString()).getValue());
+			else
+				System.out.println(this.expression+"can't be evaluated");
+		}
+			
 		Shared.result.remove(clientId);
 	}
 }

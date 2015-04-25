@@ -7,6 +7,7 @@ import java.util.Stack;
 //
 class MyRunnable implements Runnable{
 	private String threadId;
+	private boolean isExceptionRaised=false;
 	Stack<String> st = new Stack<String>();
 		
 	private void pushInStack(Task theTop){
@@ -17,7 +18,9 @@ class MyRunnable implements Runnable{
 			double rightOperand = Double.parseDouble(st.pop());
 			double leftOperand = Double.parseDouble(st.pop());
 			if(rightOperand==0 && operator.equals("/")){
-				System.out.println("Divide by zero is not possible");
+//				System.out.println("Divide by zero is not possible");
+				this.isExceptionRaised=true;
+				st.push("0");
 			}
 			else{
 				double result = computeBinary(operator, leftOperand, rightOperand);
@@ -29,6 +32,8 @@ class MyRunnable implements Runnable{
 			Result result=new Result();
 			result.setValue(Double.parseDouble(st.firstElement()));
 			result.setClientRead(false);
+			if(this.isExceptionRaised==true)
+				result.setExceptionRaised(true);
 			Shared.result.put(threadId, result);
 //			System.out.println(result.getValue()+threadId);
 			st.pop();
