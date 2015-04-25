@@ -14,20 +14,31 @@ class MyRunnable implements Runnable{
 		if(Arrays.asList(syms).contains(theTop.getToken())){
 			
 			String operator = theTop.getToken();
-			int rightOperand = Integer.parseInt(st.pop());
-			int leftOperand = Integer.parseInt(st.pop());
-			int result = computeBinary(operator, leftOperand, rightOperand);
-			st.push(Integer.toString(result));
+			double rightOperand = Double.parseDouble(st.pop());
+			double leftOperand = Double.parseDouble(st.pop());
+			if(rightOperand==0 && operator.equals("/")){
+				System.out.println("Divide by zero is not possible");
+			}
+			else{
+				double result = computeBinary(operator, leftOperand, rightOperand);
+				st.push(Double.toString(result));
+			}
 		}
 		else if(theTop.getToken().equals("=")){
-			System.out.println(st.pop());
+//			System.out.println(st.pop());
+			Result result=new Result();
+			result.setValue(Double.parseDouble(st.firstElement()));
+			result.setClientRead(false);
+			Shared.result.put(threadId, result);
+//			System.out.println(result.getValue()+threadId);
+			st.pop();
 		}
 		else{
 			st.push(theTop.getToken());
 		}
 	}
 	
-	private int computeBinary(String operator, int leftOperand,	int rightOperand) {
+	private  double computeBinary(String operator, double leftOperand,	double rightOperand) {
 		// TODO Auto-generated method stub
 		switch (operator) {
 		case "+":
@@ -53,17 +64,27 @@ class MyRunnable implements Runnable{
 		
 		while(true){
 			
-			if(SharedQueue.hasElem()){
+			if(Shared.hasElem()){
 			
 				synchronized (Server.class) {
 					//System.out.println(threadId + " " + SharedQueue.theSharedQueue.element().getClientId().toString());
-					if(SharedQueue.hasElem()){
-						if(SharedQueue.theSharedQueue.element().getToken().equals("q")){
+					if(Shared.hasElem()){
+						if(Shared.theSharedQueue.element().getToken().equals("q")){
+//							Shared.serverQuit=true;
 							break;
 						}
-						else if(SharedQueue.theSharedQueue.element().getClientId().toString().equals(threadId)){
-							pushInStack(SharedQueue.theSharedQueue.element());
-							SharedQueue.theSharedQueue.remove();
+						
+						else if(Shared.theSharedQueue.element().getClientId().toString().equals(threadId)){
+							pushInStack(Shared.theSharedQueue.element());
+							
+							if(Shared.theSharedQueue.element().getToken().equals("=")){
+								Shared.theSharedQueue.remove();
+								Server.threadPool.remove(threadId);
+								break;
+							}
+							else
+								Shared.theSharedQueue.remove();
+							
 						}
 					}
 				}
@@ -80,18 +101,19 @@ public class Server {
 	
 	public void start(){
 		while(true){
-			if(SharedQueue.hasElem()){
+			if(Shared.hasElem()){
 				synchronized (Server.class) {				
-					if(SharedQueue.hasElem()){
-						if(SharedQueue.theSharedQueue.element().getToken().equals("q")){
+					if(Shared.hasElem()){
+						if(Shared.theSharedQueue.element().getToken().equals("q")){
+							Shared.serverQuit=true;
 							break;
 						}
-						if(! threadPool.contains(SharedQueue.theSharedQueue.element().getClientId().toString())){
+						if(! threadPool.contains(Shared.theSharedQueue.element().getClientId().toString())){
 							//System.out.println("Does not contain");
 							//System.out.println(threadPool.size());
-							threadPool.add(SharedQueue.theSharedQueue.element().getClientId().toString());
+							threadPool.add(Shared.theSharedQueue.element().getClientId().toString());
 							//System.out.println(threadPool.size());
-							spawnWorker(SharedQueue.theSharedQueue.element().getClientId().toString());
+							spawnWorker(Shared.theSharedQueue.element().getClientId().toString());
 						}
 					}
 				//	break;

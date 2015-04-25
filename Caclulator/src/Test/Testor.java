@@ -30,6 +30,7 @@ public class Testor {
 			public void run() {
 				// TODO Auto-generated method stub
 				Client c3 = new Client("4 2 / = ");
+//				Client c3 = new Client("4 =");
 				c3.start();
 			}
 		});
