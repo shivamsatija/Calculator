@@ -3,10 +3,26 @@ package Test;
 
 public class Client {
 	
+	public Client getClientId() {
+		return clientId;
+	}
+
+	public void setClientId(Client clientId) {
+		this.clientId = clientId;
+	}
+
+	public String getExpression() {
+		return expression;
+	}
+
+	public void setExpression(String expression) {
+		this.expression = expression;
+	}
+
 	Client clientId;
 	String expression;
 	
-	Client(String s){
+	public Client(String s){
 		clientId = this;
 		expression = s;
 	}
