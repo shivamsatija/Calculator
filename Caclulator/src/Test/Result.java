@@ -1,9 +1,15 @@
 package Test;
 
 public class Result {
-	private double value;
-	private boolean clientRead;
-	private boolean isExceptionRaised;
+	/*
+	 	This class represents the data structure 
+	 	for a result of an expresion evaluation
+	 	 
+	 */
+	
+	private double value;			//Value of the expression evaluation
+	private boolean clientRead;		//This value represents whether the client has read the result or not
+	private boolean isExceptionRaised;  //This represents whether any exception was raised while evaluation
 	
 	public boolean isExceptionRaised() {
 		return isExceptionRaised;
@@ -11,6 +17,10 @@ public class Result {
 	public void setExceptionRaised(boolean isExceptionRaised) {
 		this.isExceptionRaised = isExceptionRaised;
 	}
+	
+	
+	
+	/*Basic setters and getters*/
 	public double getValue() {
 		return value;
 	}

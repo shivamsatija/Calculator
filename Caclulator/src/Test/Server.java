@@ -4,12 +4,18 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Stack;
-//
+
 class MyRunnable implements Runnable{
+/*This class is the runnable implementation for the task done by each worker thread of the server*/
+	
 	private String threadId;
 	private boolean isExceptionRaised=false;
 	Stack<String> st = new Stack<String>();
-		
+		 
+	/*
+	  The function pushes a token to the thread stack
+	  and does the logic to evaluate the existing elements
+	 */
 	private void pushInStack(Task theTop){
 		String[] syms = {"*", "+", "-", "/"};
 		if(Arrays.asList(syms).contains(theTop.getToken())){
@@ -18,7 +24,6 @@ class MyRunnable implements Runnable{
 			double rightOperand = Double.parseDouble(st.pop());
 			double leftOperand = Double.parseDouble(st.pop());
 			if(rightOperand==0 && operator.equals("/")){
-//				System.out.println("Divide by zero is not possible");
 				this.isExceptionRaised=true;
 				st.push("0");
 			}
@@ -28,20 +33,22 @@ class MyRunnable implements Runnable{
 			}
 		}
 		else if(theTop.getToken().equals("=")){
-//			System.out.println(st.pop());
 			Result result=new Result();
 			result.setValue(Double.parseDouble(st.firstElement()));
 			result.setClientRead(false);
 			if(this.isExceptionRaised==true)
 				result.setExceptionRaised(true);
 			Shared.result.put(threadId, result);
-//			System.out.println(result.getValue()+threadId);
 			st.pop();
 		}
 		else{
 			st.push(theTop.getToken());
 		}
 	}
+	
+	/*
+	 The function evaluate left operand "operator" right operator
+	 */
 	
 	private  double computeBinary(String operator, double leftOperand,	double rightOperand) {
 		// TODO Auto-generated method stub
@@ -61,7 +68,11 @@ class MyRunnable implements Runnable{
 		return 0;
 	}
 	
-		
+	/*
+	 	This function checks elements from the shared queue and does the popping only if its client id is same as the threads id
+	 	Each server thread runs the same logic.
+	 */
+	
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
@@ -72,10 +83,9 @@ class MyRunnable implements Runnable{
 			if(Shared.hasElem()){
 			
 				synchronized (Server.class) {
-					//System.out.println(threadId + " " + SharedQueue.theSharedQueue.element().getClientId().toString());
+				
 					if(Shared.hasElem()){
 						if(Shared.theSharedQueue.element().getToken().equals("q")){
-//							Shared.serverQuit=true;
 							break;
 						}
 						
@@ -100,6 +110,11 @@ class MyRunnable implements Runnable{
 }
 
 public class Server {
+	/*This class corresponds to a server object and is the main thread 
+	which spawns new worker threads only when a new client sends an expression token
+	 */
+	
+	
 	//The pool of worker threads
 	static HashSet<String> threadPool = new HashSet<String>();
 	
@@ -114,22 +129,16 @@ public class Server {
 							break;
 						}
 						if(! threadPool.contains(Shared.theSharedQueue.element().getClientId().toString())){
-							//System.out.println("Does not contain");
-							//System.out.println(threadPool.size());
 							threadPool.add(Shared.theSharedQueue.element().getClientId().toString());
-							//System.out.println(threadPool.size());
 							spawnWorker(Shared.theSharedQueue.element().getClientId().toString());
 						}
 					}
-				//	break;
-//					for (String s : threadPool) {
-//						System.out.println(s +" " + SharedQueue.theSharedQueue.element().getClientId().toString());
-//					}
 				}
 			}
 		}
 	}
 			
+	/*Starts a worker thread which handles the client with the name passed as the parameter*/
 	static void spawnWorker(String clientId){
 		//Create a new runnable
 		MyRunnable r = new MyRunnable();

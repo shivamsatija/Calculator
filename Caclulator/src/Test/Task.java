@@ -3,6 +3,11 @@ package Test;
 // Task Class
 public class Task {
 
+	/*
+	 * Class representing a task which has two member 
+	 * One is identify its sender
+	 * The other contains the value sent
+	 */
 	Client clientId;
 	String token;
 	
@@ -11,6 +16,7 @@ public class Task {
 		token = t;
 	}
 	
+	//Getters and setters for the client
 	public Client getClientId() {
 		return clientId;
 	}

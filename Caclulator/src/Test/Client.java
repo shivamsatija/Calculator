@@ -2,6 +2,20 @@ package Test;
 
 
 public class Client {
+/*	
+	This is Client class which contains two member variables, representing
+	a real client wishing to get the expression evaluated
+	
+*/
+	Client clientId;		//the id of the client
+	String expression;		//the expression to be evaluated
+	
+	public Client(String s){
+		clientId = this;
+		expression = s;
+	}
+	
+	/* Basic setter and getter funcitons*/
 	
 	public Client getClientId() {
 		return clientId;
@@ -18,22 +32,20 @@ public class Client {
 	public void setExpression(String expression) {
 		this.expression = expression;
 	}
-
-	Client clientId;
-	String expression;
 	
-	public Client(String s){
-		clientId = this;
-		expression = s;
-	}
+	/*
+		The start function does the client logic including
+			- Tokenizing
+			- Updating the shared queue
+			- Waiting for the result
+	*/
 	
 	public void start(){
 		String[] exps = expression.split(" ");
 		for (String exp : exps) {
 			Shared.theSharedQueue.add(new Task(this, exp));
-		//	System.out.println(this + " : " + exp);
 		}
-		System.out.println("before while");
+		
 		boolean resultCalculated=true;
 		while(!Shared.result.containsKey(clientId.toString())){
 			if(Shared.serverQuit==true){
@@ -41,9 +53,9 @@ public class Client {
 				resultCalculated=false;
 				break;
 			}
-//			System.out.println(Shared.result.size());
+
 		}
-//		System.out.println("after while");
+
 		if(resultCalculated==true){
 			if(Shared.result.get(clientId.toString()).isExceptionRaised()==false)
 				System.out.println(Shared.result.get(clientId.toString()).getValue());

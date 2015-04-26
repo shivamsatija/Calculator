@@ -1,5 +1,11 @@
 package Test;
 
+/*
+	The Testor class is used for the main function which basically 
+	does the overall system testing with three different client cases
+	Only one server object is used in the function with three parallel threads 
+	instantiating their client objects
+*/
 public class Testor {
 	
 	public static void main(String[] args){
@@ -35,11 +41,15 @@ public class Testor {
 			}
 		});
 		
+		
+		//Client Threads started
 		for (Thread thread : t) {
 			thread.start();
 		}
 		
+		//Server Object intantiated
 		Server so = new Server();
+		//so started
 		so.start();
 
 	}
